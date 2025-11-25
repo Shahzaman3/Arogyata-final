@@ -1,5 +1,5 @@
 {
-  "name": "arogyata-fullstack",
+  "name": "fullstack-monorepo",
   "private": true,
   "workspaces": [
     "frontend",
@@ -9,10 +9,13 @@
     "dev": "concurrently \"npm:dev:frontend\" \"npm:dev:backend\"",
     "dev:frontend": "npm --workspace=frontend run dev",
     "dev:backend": "npm --workspace=backend run dev",
-    "build": "npm run build:frontend && npm run build:backend",
     "build:frontend": "npm --workspace=frontend run build",
     "build:backend": "npm --workspace=backend run build",
+    "build": "npm run build:frontend && npm run build:backend",
     "start": "npm --workspace=backend run start"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
