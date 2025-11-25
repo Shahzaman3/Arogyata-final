@@ -7,7 +7,7 @@ const { uploadToIPFS, getFromIPFS } = require("../utils/ipfs");
 const { summarizeContent, summarizeChanges } = require("../utils/ai");
 
 const authMiddleware = require("../middleware/authMiddleware");
-const Content = require("../models/Content");
+const Content = require("../models/Contents");
 
 // -----------------------------------------------------
 //  UPLOAD CONTENT (Encrypted → IPFS → Metadata in MongoDB)
