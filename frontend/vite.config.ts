@@ -3,26 +3,42 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// Vite config — dev proxy added so frontend `/api/*` calls hit backend on :4000
 export default defineConfig(({ mode }) => ({
   server: {
     host: "0.0.0.0",
     port: 8080,
     proxy: {
-      // proxies any request starting with /api to your backend in dev
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
-        // keep the /api prefix — backend should expose routes under /api/*
-        rewrite: (path) => path.replace(/^\/api/, "/api")
+        rewrite: (p) => p.replace(/^\/api/, "/api")
       }
     }
   },
+
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src")
+    }
+  },
+
+  // FIX for framer-motion / react named export resolution during build
+  optimizeDeps: {
+    include: ["framer-motion", "react", "react-dom"]
+  },
+
+  // Prevent Vite SSR build from externalizing framer-motion
+  ssr: {
+    noExternal: ["framer-motion"]
+  },
+
+  build: {
+    // optionally increase rollup warning limit or tweak commonjs options if needed
+    commonjsOptions: {
+      transformMixedEsModules: true
     }
   }
 }));
