@@ -6,7 +6,7 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 
 const { encryptKeyForRecipient } = require("../utils/encryption");
 const AccessRequest = require("../models/AccessRequest");
-const Content = require("../models/Content");
+const Content = require("../models/Contents");
 
 // ---------------------------------------------------------
 //  REQUEST ACCESS  (Any authenticated user)
