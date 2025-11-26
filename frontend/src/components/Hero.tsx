@@ -3,6 +3,8 @@ import { motion, useInView } from "framer-motion";
 import { Shield, Zap, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const badges = [
   { icon: Shield, label: "Secure" },
@@ -13,6 +15,8 @@ const badges = [
 export const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(heroRef, { once: true });
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isInView && heroRef.current) {
@@ -105,6 +109,7 @@ export const Hero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button
               size="lg"
+              onClick={() => isAuthenticated ? navigate('/dashboard') : navigate('/auth')}
               className="hero-cta bg-primary hover:bg-primary-glow text-primary-foreground glow-primary text-lg px-8 py-6 w-full sm:w-auto"
             >
               Start Building
@@ -112,6 +117,7 @@ export const Hero = () => {
             <Button
               size="lg"
               variant="outline"
+              onClick={() => navigate('/documentation')}
               className="hero-cta border-2 border-border hover:border-primary text-lg px-8 py-6 w-full sm:w-auto"
             >
               View Documentation

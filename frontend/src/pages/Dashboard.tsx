@@ -9,6 +9,9 @@ import { useWallet } from '@/contexts/WalletContext';
 import { Mail, Shield, Wallet as WalletIcon } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface UploadedFile {
   id: string;
@@ -21,6 +24,7 @@ interface UploadedFile {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { address, isConnected } = useWallet();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [activeTab, setActiveTab] = useState('all');
@@ -64,6 +68,18 @@ const Dashboard = () => {
           animate="visible"
           className="space-y-6"
         >
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <Button
+              variant="ghost"
+              className="hover:bg-transparent hover:text-primary"
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Button>
+          </div>
+
           {/* Profile Summary */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="glass-card p-4 rounded-xl border border-border/50">

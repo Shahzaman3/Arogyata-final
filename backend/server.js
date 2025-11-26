@@ -5,15 +5,12 @@ const helmet = require('helmet');
 const dotenv = require('dotenv');
 
 const authRoutes = require('./routes/auth');
-console.log("AUTH ROUTES: ", authRoutes);
 const contentRoutes = require('./routes/content');
 const accessRoutes = require('./routes/access');
+const chatRoutes = require('./routes/chat');
 
 dotenv.config();
-console.log("Environment Variables Loaded:");
-console.log("PORT:", process.env.PORT);
-console.log("MONGO_URI:", process.env.MONGO_URI ? "Set" : "Not Set");
-console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Set" : "Not Set");
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,6 +36,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/access', accessRoutes);
+app.use('/api/chat', chatRoutes);
 
 const path = require('path');
 

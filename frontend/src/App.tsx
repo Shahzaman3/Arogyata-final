@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import { ChatBot } from "@/components/ChatBot";
+import Documentation from "./pages/Documentation";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/documentation" element={<Documentation />} />
               <Route
                 path="/dashboard"
                 element={
@@ -38,6 +41,7 @@ const App = () => (
           </WalletProvider>
         </AuthProvider>
       </BrowserRouter>
+      <ChatBot />
     </TooltipProvider>
   </QueryClientProvider>
 );
