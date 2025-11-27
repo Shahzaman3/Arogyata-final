@@ -56,7 +56,9 @@ export const WalletConnectPanel = () => {
         </div>
       ) : (
         <Button
-          onClick={connect}
+          onClick={async () => {
+            await connect();
+          }}
           className="w-full bg-primary hover:bg-primary-glow text-primary-foreground glow-primary animate-glow-pulse"
         >
           <Wallet className="w-4 h-4 mr-2" />

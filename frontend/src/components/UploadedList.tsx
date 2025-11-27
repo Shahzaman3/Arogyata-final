@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FileText, CheckCircle, Clock, AlertCircle, Copy } from 'lucide-react';
+import { FileText, CheckCircle, Clock, AlertCircle, Copy, Eye, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface UploadedFile {
@@ -9,14 +9,18 @@ interface UploadedFile {
   hash: string;
   timestamp: Date;
   status: 'success' | 'pending' | 'error';
+  url?: string;
 }
 
 interface UploadedListProps {
   files: UploadedFile[];
   roleFilter?: 'all' | 'private' | 'public';
+  onView: (file: UploadedFile) => void;
+  onEdit: (file: UploadedFile) => void;
+  onDelete: (file: UploadedFile) => void;
 }
 
-export const UploadedList = ({ files, roleFilter = 'all' }: UploadedListProps) => {
+export const UploadedList = ({ files, roleFilter = 'all', onView, onEdit, onDelete }: UploadedListProps) => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Hash copied to clipboard');
@@ -103,18 +107,46 @@ export const UploadedList = ({ files, roleFilter = 'all' }: UploadedListProps) =
                     <button
                       onClick={() => copyToClipboard(file.hash)}
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Copy Hash"
                     >
                       <Copy className="w-3 h-3 text-muted-foreground hover:text-primary" />
                     </button>
                   </div>
                 </div>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full border ${getStatusBadge(
-                    file.status
-                  )} flex-shrink-0`}
-                >
-                  {file.status}
-                </span>
+
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full border ${getStatusBadge(
+                      file.status
+                    )} flex-shrink-0`}
+                  >
+                    {file.status}
+                  </span>
+
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => onView(file)}
+                      className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                      title="View File"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onEdit(file)}
+                      className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                      title="Edit File"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onDelete(file)}
+                      className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                      title="Delete File"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}

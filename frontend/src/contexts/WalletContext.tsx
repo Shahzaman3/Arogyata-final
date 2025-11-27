@@ -5,7 +5,7 @@ interface WalletContextType {
   address: string | null;
   isConnected: boolean;
   network: string | null;
-  connect: () => Promise<void>;
+  connect: () => Promise<string | null>;
   disconnect: () => void;
 }
 
@@ -59,7 +59,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
   const detectNetwork = async () => {
     if (!window.ethereum) return;
-    
+
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
     const networks: Record<string, string> = {
       '0x1': 'Ethereum Mainnet',
@@ -70,24 +70,26 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setNetwork(networks[chainId] || `Unknown (${chainId})`);
   };
 
-  const connect = async () => {
+  const connect = async (): Promise<string | null> => {
     if (!window.ethereum) {
       toast.error('MetaMask not installed');
       window.open('https://metamask.io/download/', '_blank');
-      return;
+      return null;
     }
 
     try {
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
       });
-      
+
       setAddress(accounts[0]);
       localStorage.setItem('arogyta_wallet', accounts[0]);
       await detectNetwork();
       toast.success('Wallet connected successfully');
+      return accounts[0];
     } catch (error: any) {
       toast.error(error.message || 'Failed to connect wallet');
+      return null;
     }
   };
 

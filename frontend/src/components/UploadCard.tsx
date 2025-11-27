@@ -12,6 +12,7 @@ interface UploadedFile {
   hash: string;
   timestamp: Date;
   status: 'success' | 'pending' | 'error';
+  url?: string;
 }
 
 interface UploadCardProps {
@@ -51,26 +52,30 @@ export const UploadCard = ({ onUploadComplete }: UploadCardProps) => {
     // Simulate upload delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const uploadedFile: UploadedFile = {
-      id: crypto.randomUUID(),
-      name: selectedFile.name,
-      size: selectedFile.size,
-      hash: generateHash(selectedFile.name),
-      timestamp: new Date(),
-      status: 'success',
+    // Read file as Data URL for mock storage
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const uploadedFile: UploadedFile = {
+        id: crypto.randomUUID(),
+        name: selectedFile.name,
+        size: selectedFile.size,
+        hash: generateHash(selectedFile.name),
+        timestamp: new Date(),
+        status: 'success',
+        url: e.target?.result as string
+      };
+
+      onUploadComplete(uploadedFile);
+
+      toast.success('File uploaded successfully');
+
+      setSelectedFile(null);
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     };
-
-    onUploadComplete(uploadedFile);
-    
-    toast.success('File uploaded successfully', {
-      description: `Hash: ${uploadedFile.hash.slice(0, 16)}...`,
-    });
-
-    setSelectedFile(null);
-    setIsUploading(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    reader.readAsDataURL(selectedFile);
   };
 
   const formatFileSize = (bytes: number) => {

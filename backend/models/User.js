@@ -12,6 +12,15 @@ const userSchema = new mongoose.Schema({
     // Roles
     role: { type: String, enum: ["user", "admin", "owner", "patient", "institution"], default: "user" },
 
+    // Individual specific
+    age: { type: Number },
+    gender: { type: String, enum: ["male", "female", "other"] },
+
+    // Institution specific
+    licenseId: { type: String },
+    institutionType: { type: String, enum: ["hospital", "clinic", "pharmacy", "lab", "other"] },
+    contactPhone: { type: String },
+
     // Refresh token storage
     refreshToken: { type: String, default: null }
 

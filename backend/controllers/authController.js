@@ -14,7 +14,7 @@ const generateToken = (user) => {
 // ---------------------- Signup ----------------------
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, age, gender, licenseId, institutionType, contactPhone } = req.body;
 
         // Check if user exists
         const exists = await User.findOne({ email });
@@ -30,7 +30,12 @@ exports.signup = async (req, res) => {
             name,
             email,
             password: hashed,
-            role
+            role,
+            age,
+            gender,
+            licenseId,
+            institutionType,
+            contactPhone
         });
 
         return res.json({

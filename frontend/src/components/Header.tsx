@@ -44,11 +44,10 @@ export const Header = () => {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-lg"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-lg"
+          : "bg-transparent"
+          }`}
       >
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
@@ -85,12 +84,14 @@ export const Header = () => {
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
                 </motion.a>
               ))}
-              
+
               {isAuthenticated ? (
                 <>
                   {!isConnected && (
                     <Button
-                      onClick={connect}
+                      onClick={async () => {
+                        await connect();
+                      }}
                       variant="outline"
                       size="sm"
                       className="border-primary/50 hover:bg-primary/10"
@@ -170,9 +171,23 @@ export const Header = () => {
                   {item.label}
                 </motion.a>
               ))}
-              
+
               {isAuthenticated ? (
                 <>
+                  {!isConnected && (
+                    <Button
+                      onClick={async () => {
+                        await connect();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      size="lg"
+                      variant="outline"
+                      className="border-primary/50 hover:bg-primary/10"
+                    >
+                      <Wallet className="w-4 h-4 mr-2" />
+                      Connect Wallet
+                    </Button>
+                  )}
                   <Button
                     onClick={() => {
                       navigate('/dashboard');

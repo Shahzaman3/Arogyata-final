@@ -14,7 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithMetaMask: (address: string) => Promise<void>;
-  signup: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
+  signup: (email: string, password: string, name: string, role: UserRole, additionalData?: any) => Promise<void>;
   logout: () => void;
 }
 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Simulate API call
     const storedUsers = JSON.parse(localStorage.getItem('arogyta_users') || '[]');
     const foundUser = storedUsers.find((u: any) => u.email === email && u.password === password);
-    
+
     if (!foundUser) {
       throw new Error('Invalid credentials');
     }
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Check if user exists with this wallet
     const storedUsers = JSON.parse(localStorage.getItem('arogyta_users') || '[]');
     let foundUser = storedUsers.find((u: any) => u.walletAddress === address);
-    
+
     if (!foundUser) {
       // Create new user with wallet
       foundUser = {
@@ -67,9 +67,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('arogyta_user', JSON.stringify(user));
   };
 
-  const signup = async (email: string, password: string, name: string, role: UserRole) => {
+  const signup = async (email: string, password: string, name: string, role: UserRole, additionalData?: any) => {
     const storedUsers = JSON.parse(localStorage.getItem('arogyta_users') || '[]');
-    
+
     if (storedUsers.find((u: any) => u.email === email)) {
       throw new Error('User already exists');
     }
@@ -80,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password,
       name,
       role,
+      ...additionalData
     };
 
     storedUsers.push(newUser);
