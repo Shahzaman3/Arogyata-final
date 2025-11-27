@@ -37,7 +37,7 @@ export const ScrollProgressIndicator = () => {
         }}
         transition={{ duration: 0.2 }}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="fixed bottom-24 right-6 p-4 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full shadow-lg glow-primary z-40"
+        className="fixed bottom-6 left-6 p-4 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full shadow-lg glow-primary z-40"
         aria-label="Scroll to top"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}

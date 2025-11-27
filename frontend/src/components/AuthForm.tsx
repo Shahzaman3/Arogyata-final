@@ -57,20 +57,11 @@ export const AuthForm = () => {
   const handleMetaMaskLogin = async () => {
     setIsLoading(true);
     try {
-      let walletAddress = address;
-      if (!walletAddress) {
-        walletAddress = await connect();
-      }
-
-      if (!walletAddress) {
-        throw new Error('Failed to connect wallet');
-      }
-
-      await loginWithMetaMask(walletAddress);
-      toast.success('Logged in with MetaMask');
+      await loginWithMetaMask();
+      toast.success('Wallet connected successfully!');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.message || 'MetaMask login failed');
+      toast.error(error.message || 'Failed to connect wallet');
     } finally {
       setIsLoading(false);
     }

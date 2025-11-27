@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const accessRequestSchema = new mongoose.Schema({
-    contentHash: { type: String, required: true },
+    contentHash: { type: String, required: false },
 
     requester: { 
         type: mongoose.Schema.Types.ObjectId, 

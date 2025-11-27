@@ -7,30 +7,46 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 const { encryptKeyForRecipient } = require("../utils/encryption");
 const AccessRequest = require("../models/AccessRequest");
 const Content = require("../models/Contents");
+const AuditLog = require("../models/AuditLog");
 
 // ---------------------------------------------------------
 //  REQUEST ACCESS  (Any authenticated user)
 // ---------------------------------------------------------
 router.post("/request", authMiddleware, async (req, res) => {
     try {
-        const { contentHash, purpose } = req.body;
+        const { contentHash, patientId, purpose } = req.body;
 
-        if (!contentHash) {
-            return res.status(400).json({ error: "Missing contentHash" });
+        if (!contentHash && !patientId) {
+            return res.status(400).json({ error: "Must provide either contentHash or patientId" });
         }
 
-        // Find content owner
-        const content = await Content.findOne({ ipfsHash: contentHash });
-        if (!content) {
-            return res.status(404).json({ error: "Content not found" });
+        let ownerId = patientId;
+
+        // If contentHash is provided, verify content and get owner
+        if (contentHash) {
+            const content = await Content.findOne({ ipfsHash: contentHash });
+            if (!content) {
+                return res.status(404).json({ error: "Content not found" });
+            }
+            ownerId = content.owner;
         }
 
         const request = await AccessRequest.create({
-            contentHash,
+            contentHash: contentHash || null,
             requester: req.user.id,
-            owner: content.owner,
+            owner: ownerId,
             purpose,
             status: "pending"
+        });
+
+        // Create Audit Log
+        await AuditLog.create({
+            action: "ACCESS_REQUESTED",
+            actor: req.user.id,
+            target: ownerId,
+            resource: request._id,
+            details: `Requested access to ${contentHash ? 'content ' + contentHash : 'patient records'}`,
+            hash: "0x" + Math.random().toString(16).slice(2) // Mock hash
         });
 
         return res.json({
@@ -55,7 +71,7 @@ router.get(
             const pending = await AccessRequest.find({
                 owner: req.user.id,
                 status: "pending"
-            }).populate("requester", "email address role");
+            }).populate("requester", "name email address role");
 
             res.json(pending);
 
@@ -96,6 +112,16 @@ router.post(
             // Mark request as approved
             request.status = "approved";
             await request.save();
+
+            // Create Audit Log
+            await AuditLog.create({
+                action: "ACCESS_GRANTED",
+                actor: req.user.id,
+                target: request.requester,
+                resource: request._id,
+                details: `Granted access to request ${requestId}`,
+                hash: "0x" + Math.random().toString(16).slice(2) // Mock hash
+            });
 
             res.json({
                 success: true,

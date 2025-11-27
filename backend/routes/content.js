@@ -19,6 +19,10 @@ router.post("/upload", authMiddleware, async (req, res) => {
         if (!data)
             return res.status(400).json({ error: "Missing data field" });
 
+        if (!data.startsWith('data:')) {
+            return res.status(400).json({ error: "Invalid data format. Must be a Data URL." });
+        }
+
         // 1. Generate symmetric key
         const symmetricKey = crypto.randomBytes(32).toString("hex");
 
@@ -39,6 +43,7 @@ router.post("/upload", authMiddleware, async (req, res) => {
             description: description || "",
             ipfsHash: contentHash,
             summary,
+            encryptionKey: symmetricKey
         });
 
         res.json({
@@ -58,22 +63,24 @@ router.post("/upload", authMiddleware, async (req, res) => {
 // -----------------------------------------------------
 //  MODIFY CONTENT (Creates new version + keeps chain)
 // -----------------------------------------------------
-router.post("/:hash/modify", authMiddleware, async (req, res) => {
+router.post("/:id/modify", authMiddleware, async (req, res) => {
     try {
-        const { hash } = req.params;
-        const { newData, symmetricKey } = req.body;
+        const { id } = req.params;
+        const { newData, title, description } = req.body;
 
         // Find metadata in DB
         const oldRecord = await Content.findOne({
-            ipfsHash: hash,
+            _id: id,
             owner: req.user.id
-        });
+        }).select("+encryptionKey");
 
         if (!oldRecord)
             return res.status(404).json({ error: "Content not found" });
 
+        const symmetricKey = oldRecord.encryptionKey;
+
         // Retrieve + decrypt original content
-        const oldPayloadStr = await getFromIPFS(hash);
+        const oldPayloadStr = await getFromIPFS(oldRecord.ipfsHash);
         const oldPayload = JSON.parse(oldPayloadStr);
 
         const oldData = decryptData(
@@ -84,60 +91,61 @@ router.post("/:hash/modify", authMiddleware, async (req, res) => {
         );
 
         // Encrypt new data
-        const { encrypted, iv, authTag } = encryptData(newData, symmetricKey);
+        const { encrypted, iv, authTag } = encryptData(newData || oldData, symmetricKey);
 
         const newPayload = JSON.stringify({ encrypted, iv, authTag });
         const newContentHash = await uploadToIPFS(newPayload);
 
-        const changeSummary = await summarizeChanges(oldData, newData);
-        const newSummary = await summarizeContent(newData);
+        const changeSummary = newData ? await summarizeChanges(oldData, newData) : "Metadata updated";
+        const newSummary = newData ? await summarizeContent(newData) : oldRecord.summary;
 
-        // Store new version in MongoDB
-        const newItem = await Content.create({
-            owner: req.user.id,
-            title: oldRecord.title,
-            description: oldRecord.description,
-            ipfsHash: newContentHash,
-            previousHash: hash,
-            summary: newSummary,
-        });
+        // Update record (or create new version if strict versioning needed, but for now update in place or create new)
+        // For simple edit, we can update the existing record or create a new one. 
+        // Let's update the existing one for simplicity in this dashboard view, 
+        // but typically blockchain apps might append. 
+        // Given the prompt implies "edit", we'll update the pointer.
+        
+        oldRecord.title = title || oldRecord.title;
+        oldRecord.description = description || oldRecord.description;
+        oldRecord.ipfsHash = newContentHash;
+        oldRecord.summary = newSummary;
+        await oldRecord.save();
 
         res.json({
             message: "Content modified successfully",
             newContentHash,
             changeSummary,
             newSummary,
-            newItem
+            item: oldRecord
         });
 
     } catch (err) {
         console.error(err);
-        res.status(403).json({ error: "Invalid key or decryption failed" });
+        res.status(403).json({ error: "Modification failed" });
     }
 });
 
 // -----------------------------------------------------
 //  RETRIEVE CONTENT (Decryption required)
 // -----------------------------------------------------
-router.post("/:hash/retrieve", authMiddleware, async (req, res) => {
+router.post("/:id/retrieve", authMiddleware, async (req, res) => {
     try {
-        const { hash } = req.params;
-        const { symmetricKey } = req.body;
-
+        const { id } = req.params;
+        
         const record = await Content.findOne({
-            ipfsHash: hash,
+            _id: id,
             owner: req.user.id
-        });
+        }).select("+encryptionKey");
 
         if (!record)
             return res.status(404).json({ error: "Content metadata not found" });
 
-        const payloadStr = await getFromIPFS(hash);
+        const payloadStr = await getFromIPFS(record.ipfsHash);
         const payload = JSON.parse(payloadStr);
 
         const decrypted = decryptData(
             payload.encrypted,
-            symmetricKey,
+            record.encryptionKey,
             payload.iv,
             payload.authTag
         );
@@ -150,6 +158,25 @@ router.post("/:hash/retrieve", authMiddleware, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(403).json({ error: "Decryption failed or IPFS error" });
+    }
+});
+
+// -----------------------------------------------------
+//  DELETE CONTENT
+// -----------------------------------------------------
+router.delete("/:id", authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await Content.deleteOne({ _id: id, owner: req.user.id });
+        
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: "Content not found" });
+        }
+
+        res.json({ message: "Content deleted successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Delete failed" });
     }
 });
 

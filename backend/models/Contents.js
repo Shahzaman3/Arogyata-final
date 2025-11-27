@@ -10,6 +10,8 @@ const contentSchema = new mongoose.Schema({
 
     summary: { type: String, default: "" },
 
+    encryptionKey: { type: String, select: false }, // Store key but don't return by default
+
     previousHash: { type: String, default: null },
 
 }, { timestamps: true });

@@ -1,218 +1,193 @@
 import { motion } from "framer-motion";
-import { Database, Shield, Server, Cpu } from "lucide-react";
+import { Database, Shield, Server, Cpu, CheckCircle2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface IntegrationNode {
+interface FeatureCardProps {
   icon: any;
-  label: string;
-  color: string;
-  colorHex?: string;
-  angle: number;
+  title: string;
+  description: string;
+  delay: number;
 }
 
-const nodes: IntegrationNode[] = [
-  { icon: Database, label: "IPFS", color: "primary", angle: -45 },
-  { icon: Shield, label: "Encryption", color: "secondary", angle: 45 },
-  { icon: Server, label: "Blockchain", color: "accent", angle: 135 },
-  { icon: Cpu, label: "Smart Contracts", color: "primary", angle: 225 },
-];
+const FeatureCard = ({ icon: Icon, title, description, delay }: FeatureCardProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className="group relative p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+    <div className="relative z-10">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+        <Icon className="w-6 h-6 text-primary" />
+      </div>
+      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">{title}</h3>
+      <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+    </div>
+  </motion.div>
+);
 
 export const BlockchainIntegration = () => {
-  const radius = 40; // Percentage from center
-
   return (
-    <section
-      id="integration"
-      className="relative py-20 bg-muted/30"
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            Blockchain <span className="text-gradient-primary">Integration</span>
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Seamlessly connect your application with decentralized infrastructure
-          </p>
-        </motion.div>
+    <section id="integration" className="relative py-24 overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-muted/30" />
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-        {/* Integration Diagram */}
-        <div className="relative max-w-4xl mx-auto h-96 md:h-[500px] flex items-center justify-center">
-          {/* SVG Connections - thick diagonal gradient bars centered and animated */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="xMidYMid meet"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="hsl(172 66% 50%)" stopOpacity="0.95" />
-                <stop offset="50%" stopColor="hsl(250 70% 60%)" stopOpacity="0.95" />
-                <stop offset="100%" stopColor="hsl(300 65% 60%)" stopOpacity="0.95" />
-              </linearGradient>
-            </defs>
+      {/* Mesh Gradient Background */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 50% 50%, var(--primary) 0%, transparent 50%)`
+        }}
+      />
 
-            {/* two thick bars crossing the center, rotated -45 and 45 degrees */}
-            <motion.rect
-              x="5"
-              y="48.5"
-              width="90"
-              height="3.6"
-              rx="1.8"
-              fill="none"
-              stroke="url(#lineGradient)"
-              strokeWidth="3.6"
-              strokeLinecap="square"
-              transform="rotate(-45 50 50)"
-              initial={{ opacity: 0, strokeDashoffset: 60 }}
-              whileInView={{ opacity: 1, strokeDashoffset: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9 }}
-            />
-            <motion.rect
-              x="5"
-              y="48.5"
-              width="90"
-              height="3.6"
-              rx="1.8"
-              fill="none"
-              stroke="url(#lineGradient)"
-              strokeWidth="3.6"
-              strokeLinecap="square"
-              transform="rotate(45 50 50)"
-              initial={{ opacity: 0, strokeDashoffset: 60 }}
-              whileInView={{ opacity: 1, strokeDashoffset: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: 0.08 }}
-            />
-          </svg>
-
-          {/* Center Hub */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-20">
           <motion.div
-            className="absolute top-1/2.5 left-1/2.5 -translate-x-1/2 -translate-y-1/2 w-28 h-28 md:w-36 md:h-36 bg-card rounded-full flex items-center justify-center z-20"
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.18 }}
-            style={{
-              boxShadow: "0 0 40px rgba(16,185,129,0.12), inset 0 0 10px rgba(16,185,129,0.06)",
-              border: "2px solid rgba(16,185,129,0.9)",
-            }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6"
           >
-            <div className="text-center">
-              <div className="text-lg md:text-2xl font-extrabold text-gradient-primary">Arogyta</div>
-              <div className="text-xs text-muted-foreground">Core</div>
-            </div>
+            <Shield className="w-4 h-4" />
+            <span>Enterprise Grade Security</span>
           </motion.div>
 
-          {/* Integration Nodes - positions tuned to match supplied layout */}
-          {nodes.map((node, index) => {
-            const angleRad = (node.angle * Math.PI) / 180;
-            // use a slightly larger radius for perfect visual spacing
-            const layoutRadius = radius ?? 28; // keep your radius var if exists
-            const effectiveRadius = layoutRadius + 6; // small nudge to align with bars
-            const x = 50 + Math.cos(angleRad) * effectiveRadius;
-            const y = 50 + Math.sin(angleRad) * effectiveRadius;
-            const Icon = node.icon;
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold mb-6 tracking-tight"
+          >
+            Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-glow">Decentralized</span> Intelligence
+          </motion.h2>
 
-            return (
-              <motion.div
-                key={node.label}
-                className="absolute z-30"
-                style={{
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  transform: "translate(-50%, -50%)",
-                }}
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: 0.36 + index * 0.06 }}
-                whileHover={{ scale: 1.06 }}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <div
-                    className="p-3 md:p-4 bg-card rounded-full glow-card hover:scale-110 transition-transform border"
-                    style={{
-                      borderColor: node.color || node.colorHex || "rgba(255,255,255,0.06)",
-                      boxShadow: "0 6px 18px rgba(2,6,23,0.5)",
-                    }}
-                  >
-                    <Icon size={22} style={{ color: node.color || node.colorHex }} />
-                  </div>
-                  <span className="text-xs md:text-sm font-medium bg-card px-2 md:px-3 py-1 rounded-full border border-border whitespace-nowrap">
-                    {node.label}
-                  </span>
-                </div>
-              </motion.div>
-            );
-          })}
-
-          {/* Data Flow Animation - smaller particles, distance tuned to match layout */}
-          {nodes.map((node, i) => {
-            const angleRad = (node.angle * Math.PI) / 180;
-            const maxDistance = 120; // px, reduced for layout parity with image
-            const x = Math.cos(angleRad) * maxDistance;
-            const y = Math.sin(angleRad) * maxDistance;
-
-            return (
-              <motion.div
-                key={`flow-${i}`}
-                className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full shadow-glow pointer-events-none"
-                style={{ background: node.color || node.colorHex || "var(--primary)" }}
-                initial={{ x: 0, y: 0, opacity: 0, scale: 0.3 }}
-                animate={{
-                  x: [0, x],
-                  y: [0, y],
-                  opacity: [0, 0.9, 0],
-                  scale: [0.3, 0.95, 0.3],
-                }}
-                transition={{
-                  duration: 2.4,
-                  repeat: Infinity,
-                  delay: i * 0.6,
-                  ease: "easeInOut",
-                }}
-              />
-            );
-          })}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-muted-foreground leading-relaxed"
+          >
+            Arogyta leverages cutting-edge blockchain technology to ensure your health data remains immutable, secure, and completely under your control.
+          </motion.p>
         </div>
 
-        {/* Integration Stats */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
+        {/* Core Integration Visual */}
+        <div className="grid lg:grid-cols-3 gap-8 items-center mb-24">
+          {/* Left Column Features */}
+          <div className="space-y-6">
+            <FeatureCard
+              icon={Database}
+              title="IPFS Storage"
+              description="Decentralized file storage ensures your medical records are distributed, redundant, and always accessible."
+              delay={0.3}
+            />
+            <FeatureCard
+              icon={Shield}
+              title="Zero-Knowledge Encryption"
+              description="Military-grade encryption where only you hold the keys. Not even we can access your data."
+              delay={0.4}
+            />
+          </div>
+
+          {/* Center Visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative h-[400px] flex items-center justify-center"
+          >
+            {/* Animated Rings */}
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="absolute inset-0 border border-primary/20 rounded-full"
+                style={{ margin: `${i * 40}px` }}
+                animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
+                transition={{ duration: 20 + i * 5, repeat: Infinity, ease: "linear" }}
+              />
+            ))}
+
+            {/* Center Core */}
+            <div className="relative w-32 h-32 bg-card rounded-full flex items-center justify-center border-2 border-primary shadow-[0_0_40px_rgba(12,120,75,0.3)] z-20">
+              <div className="absolute inset-0 bg-primary/10 rounded-full animate-pulse" />
+              <Server className="w-12 h-12 text-primary" />
+            </div>
+
+            {/* Connecting Lines (Decorative) */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 400 400">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="var(--primary)" stopOpacity="0" />
+                  <stop offset="50%" stopColor="var(--primary)" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <motion.path
+                d="M 50 100 Q 200 200 50 300"
+                fill="none"
+                stroke="url(#grad1)"
+                strokeWidth="2"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+              />
+              <motion.path
+                d="M 350 100 Q 200 200 350 300"
+                fill="none"
+                stroke="url(#grad1)"
+                strokeWidth="2"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+              />
+            </svg>
+          </motion.div>
+
+          {/* Right Column Features */}
+          <div className="space-y-6">
+            <FeatureCard
+              icon={Server}
+              title="Immutable Ledger"
+              description="Every access request and data modification is recorded on the blockchain for complete auditability."
+              delay={0.5}
+            />
+            <FeatureCard
+              icon={Cpu}
+              title="Smart Contracts"
+              description="Automated permission management ensures data is shared only when specific conditions are met."
+              delay={0.6}
+            />
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            { value: "99.9%", label: "Uptime" },
-            { value: "<100ms", label: "Latency" },
-            { value: "256-bit", label: "Encryption" },
-            { value: "Multi-Chain", label: "Support" },
+            { label: "Network Uptime", value: "99.99%" },
+            { label: "Block Time", value: "< 2s" },
+            { label: "Encryption", value: "AES-256" },
+            { label: "Gas Fees", value: "$0.00" },
           ].map((stat, index) => (
             <motion.div
-              key={stat.label}
-              className="text-center p-4 md:p-6 bg-card border border-border rounded-lg hover:border-primary/50 transition-all group"
+              key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-              whileHover={{ y: -5 }}
+              transition={{ delay: 0.6 + index * 0.1 }}
+              className="bg-card/50 backdrop-blur-sm border border-border/50 p-6 rounded-xl text-center hover:bg-card transition-colors"
             >
-              <div className="text-2xl md:text-3xl font-bold text-gradient-primary mb-2 group-hover:scale-110 transition-transform">
-                {stat.value}
-              </div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="text-3xl font-bold text-primary mb-1">{stat.value}</div>
+              <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     address: { type: String, unique: true, sparse: true },
 
     // Roles
-    role: { type: String, enum: ["user", "admin", "owner", "patient", "institution"], default: "user" },
+    role: { type: String, enum: ["user", "admin", "owner", "patient", "institution", "individual"], default: "user" },
 
     // Individual specific
     age: { type: Number },
