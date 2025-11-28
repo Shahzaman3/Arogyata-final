@@ -51,10 +51,45 @@ export const AccessRequests = () => {
       };
 
       const handleAction = async (requestId: string, action: 'grant' | 'reject') => {
-            // Placeholder for grant/reject logic
-            // For now just remove from list to simulate action
-            toast.success(`Request ${action}ed`);
-            setRequests(prev => prev.filter(r => r._id !== requestId));
+            if (action === 'reject') {
+                  // For now, we don't have a reject endpoint, so just hide it locally
+                  toast.info('Request rejected locally');
+                  setRequests(prev => prev.filter(r => r._id !== requestId));
+                  return;
+            }
+
+            try {
+                  const token = localStorage.getItem('token');
+
+                  // MOCK KEYS for now since frontend crypto isn't fully ready
+                  // In production, these would be derived from the user's wallet/keys
+                  const mockSymmetricKey = "mock-symmetric-key-" + Date.now();
+                  const mockGranteePublicKey = "mock-public-key-" + Math.random();
+
+                  const response = await fetch(`${API_URL}/access/grant`, {
+                        method: 'POST',
+                        headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                              requestId,
+                              symmetricKey: mockSymmetricKey,
+                              granteePublicKey: mockGranteePublicKey
+                        })
+                  });
+
+                  if (response.ok) {
+                        toast.success('Access Granted Successfully');
+                        setRequests(prev => prev.filter(r => r._id !== requestId));
+                  } else {
+                        const error = await response.json();
+                        toast.error(error.error || 'Failed to grant access');
+                  }
+            } catch (error) {
+                  console.error('Grant error:', error);
+                  toast.error('Failed to process request');
+            }
       };
 
       return (
