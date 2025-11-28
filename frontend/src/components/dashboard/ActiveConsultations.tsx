@@ -16,6 +16,7 @@ interface Consultation {
 
 export const ActiveConsultations = () => {
       const [consultations, setConsultations] = useState<Consultation[]>([]);
+      const [isLoading, setIsLoading] = useState(true);
       useEffect(() => {
             const fetchConsultations = async () => {
                   try {
