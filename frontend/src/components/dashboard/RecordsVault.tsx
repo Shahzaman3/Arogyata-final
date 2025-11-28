@@ -29,6 +29,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { API_URL } from '@/config';
 
 interface Record {
       _id: string;
@@ -58,7 +59,7 @@ export const RecordsVault = () => {
       const fetchRecords = async () => {
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/content', {
+                  const response = await fetch(`${API_URL}/content`, {
                         headers: {
                               'Authorization': `Bearer ${token}`
                         }
@@ -82,7 +83,7 @@ export const RecordsVault = () => {
             const toastId = toast.loading('Decrypting record...');
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch(`http://localhost:3000/api/content/${record._id}/retrieve`, {
+                  const response = await fetch(`${API_URL}/content/${record._id}/retrieve`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ export const RecordsVault = () => {
             const toastId = toast.loading('Loading record for editing...');
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch(`http://localhost:3000/api/content/${record._id}/retrieve`, {
+                  const response = await fetch(`${API_URL}/content/${record._id}/retrieve`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -139,7 +140,7 @@ export const RecordsVault = () => {
             setIsProcessing(true);
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch(`http://localhost:3000/api/content/${editRecord._id}/modify`, {
+                  const response = await fetch(`${API_URL}/content/${editRecord._id}/modify`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -172,7 +173,7 @@ export const RecordsVault = () => {
             setIsProcessing(true);
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch(`http://localhost:3000/api/content/${deleteId}`, {
+                  const response = await fetch(`${API_URL}/content/${deleteId}`, {
                         method: 'DELETE',
                         headers: {
                               'Authorization': `Bearer ${token}`
@@ -299,7 +300,7 @@ export const RecordsVault = () => {
 
                                                 const token = localStorage.getItem('token');
 
-                                                const response = await fetch('http://localhost:3000/api/content/upload', {
+                                                const response = await fetch(`${API_URL}/content/upload`, {
                                                       method: 'POST',
                                                       headers: {
                                                             'Content-Type': 'application/json',

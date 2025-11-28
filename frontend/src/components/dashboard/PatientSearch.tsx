@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { API_URL } from '@/config';
 
 interface Patient {
       _id: string;
@@ -27,7 +28,7 @@ export const PatientSearch = () => {
 
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/dashboard/institution/search', {
+                  const response = await fetch(`${API_URL}/dashboard/institution/search`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ export const PatientSearch = () => {
 
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/access/request', {
+                  const response = await fetch(`${API_URL}/access/request`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import { ShieldAlert, FileSearch, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
+import { API_URL } from '@/config';
 
 interface AuditEntry {
       _id: string;
@@ -23,7 +24,7 @@ export const AdminPanel = () => {
             const fetchLogs = async () => {
                   try {
                         const token = localStorage.getItem('token');
-                        const response = await fetch('http://localhost:3000/api/dashboard/institution/audit-logs', {
+                        const response = await fetch(`${API_URL}/dashboard/institution/audit-logs`, {
                               headers: {
                                     'Authorization': `Bearer ${token}`
                               }

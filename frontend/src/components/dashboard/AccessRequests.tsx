@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { API_URL } from '@/config';
 
 interface Request {
       _id: string;
@@ -27,7 +28,7 @@ export const AccessRequests = () => {
       const fetchRequests = async () => {
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/access/pending', {
+                  const response = await fetch(`${API_URL}/access/pending`, {
                         headers: {
                               'Authorization': `Bearer ${token}`
                         }

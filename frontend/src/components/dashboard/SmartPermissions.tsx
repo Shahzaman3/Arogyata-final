@@ -3,6 +3,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { API_URL } from '@/config';
 
 interface Permission {
       _id: string;
@@ -26,7 +27,7 @@ export const SmartPermissions = () => {
       const fetchPermissions = async () => {
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/dashboard/patient/permissions', {
+                  const response = await fetch(`${API_URL}/dashboard/patient/permissions`, {
                         headers: {
                               'Authorization': `Bearer ${token}`
                         }

@@ -1,6 +1,7 @@
 import { Activity, Terminal, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import { API_URL } from '@/config';
 
 interface LogEntry {
       _id: string;
@@ -22,7 +23,7 @@ export const AuditLog = () => {
             const fetchLogs = async () => {
                   try {
                         const token = localStorage.getItem('token');
-                        const response = await fetch('http://localhost:3000/api/dashboard/patient/audit-logs', {
+                        const response = await fetch(`${API_URL}/dashboard/patient/audit-logs`, {
                               headers: {
                                     'Authorization': `Bearer ${token}`
                               }

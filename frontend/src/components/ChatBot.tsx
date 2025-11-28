@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, X, Send, Loader2, Bot, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_URL } from '@/config';
 
 interface Message {
       role: 'user' | 'assistant';
@@ -38,7 +39,7 @@ export const ChatBot = () => {
             setIsLoading(true);
 
             try {
-                  const response = await fetch('http://localhost:3000/api/chat', {
+                  const response = await fetch(`${API_URL}/chat`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
@@ -99,8 +100,8 @@ export const ChatBot = () => {
                                                                         </div>
                                                                         <div
                                                                               className={`p-3 rounded-lg text-sm max-w-[80%] ${msg.role === 'user'
-                                                                                          ? 'bg-primary text-primary-foreground rounded-tr-none'
-                                                                                          : 'bg-muted text-foreground rounded-tl-none'
+                                                                                    ? 'bg-primary text-primary-foreground rounded-tr-none'
+                                                                                    : 'bg-muted text-foreground rounded-tl-none'
                                                                                     }`}
                                                                         >
                                                                               {msg.content}

@@ -2,6 +2,7 @@ import { Clock, Eye, User, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import { API_URL } from '@/config';
 
 interface Consultation {
       _id: string;
@@ -15,13 +16,11 @@ interface Consultation {
 
 export const ActiveConsultations = () => {
       const [consultations, setConsultations] = useState<Consultation[]>([]);
-      const [isLoading, setIsLoading] = useState(true);
-
       useEffect(() => {
             const fetchConsultations = async () => {
                   try {
                         const token = localStorage.getItem('token');
-                        const response = await fetch('http://localhost:3000/api/dashboard/institution/consultations', {
+                        const response = await fetch(`${API_URL}/dashboard/institution/consultations`, {
                               headers: {
                                     'Authorization': `Bearer ${token}`
                               }

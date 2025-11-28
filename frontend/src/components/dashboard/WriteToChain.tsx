@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { API_URL } from '@/config';
 
 export const WriteToChain = () => {
       const [isSaving, setIsSaving] = useState(false);
@@ -24,7 +25,7 @@ export const WriteToChain = () => {
             setIsSaving(true);
             try {
                   const token = localStorage.getItem('token');
-                  const response = await fetch('http://localhost:3000/api/content/upload', {
+                  const response = await fetch(`${API_URL}/content/upload`, {
                         method: 'POST',
                         headers: {
                               'Content-Type': 'application/json',
